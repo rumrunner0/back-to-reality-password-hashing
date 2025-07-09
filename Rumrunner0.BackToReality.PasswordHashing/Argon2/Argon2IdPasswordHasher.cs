@@ -5,7 +5,7 @@ using Konscious.Security.Cryptography;
 using Rumrunner0.BackToReality.SharedExtensions.Exceptions;
 using Rumrunner0.BackToReality.SharedExtensions.Extensions;
 
-namespace Rumrunner0.BackToReality.PasswordHashing;
+namespace Rumrunner0.BackToReality.PasswordHashing.Argon2;
 
 // Argon2-id password hasher, v.0.1.0, from Jul 10, 2025.
 

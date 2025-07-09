@@ -1,7 +1,7 @@
 using System;
 using Konscious.Security.Cryptography;
 
-namespace Rumrunner0.BackToReality.PasswordHashing;
+namespace Rumrunner0.BackToReality.PasswordHashing.Argon2;
 
 /// <summary>Parameter validator for <see cref="Argon2" /> password hasher.</summary>
 internal static class Argon2ParameterValidator

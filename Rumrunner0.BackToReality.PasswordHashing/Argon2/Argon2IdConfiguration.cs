@@ -1,7 +1,7 @@
 using System;
 using Konscious.Security.Cryptography;
 
-namespace Rumrunner0.BackToReality.PasswordHashing;
+namespace Rumrunner0.BackToReality.PasswordHashing.Argon2;
 
 /// <summary>Configuration of <see cref="Argon2id" /> hashing.</summary>
 /// <param name="Memory">The memory cost in KiB (64 MiB).</param>

@@ -1,0 +1,21 @@
+#
+# Folders
+#
+
+/.vs/
+/.vscode/
+/.idea/
+
+/*/bin/
+/*/obj/
+
+#
+# Files
+#
+
+*.log
+*.user
+*.snk
+
+.env
+.DS_Store

@@ -7,8 +7,6 @@ using Rumrunner0.BackToReality.SharedExtensions.Extensions;
 
 namespace Rumrunner0.BackToReality.PasswordHashing.Argon2;
 
-// Argon2-id password hasher, v0.1.0, from Jul 10, 2025.
-
 // TODO: It will be good to track issues in core library :)
 // https://github.com/kmaragon/Konscious.Security.Cryptography/issues
 

@@ -2,6 +2,7 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 using Konscious.Security.Cryptography;
+using Rumrunner0.BackToReality.SharedExtensions.Collections;
 using Rumrunner0.BackToReality.SharedExtensions.Exceptions;
 using Rumrunner0.BackToReality.SharedExtensions.Extensions;
 

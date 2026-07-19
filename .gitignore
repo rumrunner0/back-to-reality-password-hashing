@@ -1,21 +1,31 @@
 #
-# Folders
+# Environment
+#
+
+.env
+.DS_Store
+
+#
+# IDEs
 #
 
 /.vs/
 /.vscode/
 /.idea/
+*.user
+
+#
+# Agents
+#
+
+.claude/settings.local.json
+.claude/.build-stamp
+
+#
+# Project
+#
 
 /*/bin/
 /*/obj/
-
-#
-# Files
-#
-
-*.log
-*.user
 *.snk
-
-.env
-.DS_Store
+*.log

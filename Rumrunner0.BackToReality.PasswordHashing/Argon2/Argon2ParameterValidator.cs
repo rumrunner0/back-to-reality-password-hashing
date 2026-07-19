@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using Konscious.Security.Cryptography;
 
 namespace Rumrunner0.BackToReality.PasswordHashing.Argon2;
@@ -19,7 +20,8 @@ internal static class Argon2ParameterValidator
 			!parameter.StartsWith(prefix, StringComparison.Ordinal) ||
 
 			// Its value must be a valid number.
-			!int.TryParse(parameter.AsSpan(start: prefix.Length), out var v) ||
+			// NumberStyles.None keeps the parsing strict: ASCII digits only, no sign, no whitespace, no culture-specific formats.
+			!int.TryParse(parameter.AsSpan(start: prefix.Length), NumberStyles.None, CultureInfo.InvariantCulture, out var v) ||
 
 			// Its value must be greater than 0.
 			v <= 0

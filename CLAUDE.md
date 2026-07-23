@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-.NET solution with the class library `Rumrunner0.BackToReality.PasswordHashing` (Argon2id password hashing with a PHC-formatted string API, published to nuget.org) and a `...PasswordHashing.Demo` console app. There is NO test project and no CI: `dotnet build` is the verification step, and the build must stay at 0 warnings (missing XML docs on public members produce warnings). If a test project is ever added, `dotnet test` becomes part of verification and the `/release` skill must be updated to run it.
+.NET solution with the class library `Rumrunner0.BackToReality.PasswordHashing` (Argon2id password hashing with a PHC-formatted string API, published to nuget.org), a `...PasswordHashing.Demo` console app, and a `...PasswordHashing.Tests` xunit project. There is no CI: verification is `dotnet build` (must stay at 0 warnings — missing XML docs on public members produce warnings) plus `dotnet test` (0 failures). Tests use only the public API — no `InternalsVisibleTo`. The suite must stay fast: KDF-touching tests use a deliberately weak configuration (`m=8192,t=1,p=1`); `Argon2IdPasswordHasherTests` holds an interop vector produced by the reference `argon2` CLI (regenerate with `echo -n "p@ssw0rd" | argon2 interopsalt16byte -id -t 3 -k 8192 -p 2 -l 32 -e`).
 
 ## Gotchas
 

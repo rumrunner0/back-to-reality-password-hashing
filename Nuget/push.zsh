@@ -11,7 +11,7 @@ echo "Working directory: $PWD"
 : "${NUGET_ORG_API_KEY:?"Environment variable is not set"}"
 
 readonly CONFIGURATION="Release"
-readonly VERSION="0.2.0"
+readonly VERSION="0.3.0"
 readonly FEED="https://api.nuget.org/v3/index.json"
 readonly API_KEY="${NUGET_ORG_API_KEY}"
 

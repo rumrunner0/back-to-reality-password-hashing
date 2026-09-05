@@ -8,7 +8,7 @@ readonly SOLUTION_DIRECTORY=${SCRIPT_DIRECTORY:h}
 cd "$SOLUTION_DIRECTORY" || { echo "Failed to cd to $SOLUTION_DIRECTORY" >&2; exit 1; }
 echo "Working directory: $PWD"
 
-: "${NUGET_ORG_API_KEY:?"Environment variable is not set"}"
+: "${NUGET_ORG_API_KEY:?Environment variable is not set}"
 
 readonly CONFIGURATION="Release"
 readonly VERSION="0.3.1"

@@ -2,7 +2,7 @@
 
 # Claude Code Stop hook: blocks Claude from finishing a turn while `dotnet build` fails.
 # - Incremental: skips the build when no watched file changed since the last SUCCESSFUL build.
-# - Loop guard: if a block already triggered a fix attempt this turn (stop_hook_active), notifies the user via systemMessage instead of blocking again.
+# - Loop guard: if a block already triggered a fix attempt this turn (stop_hook_active), notifies the user via systemMessage (naming the current top error) instead of blocking again.
 # - Fail-open: environment problems (bad cwd, missing jq) disable the gate instead of trapping Claude.
 
 input=$(cat)
@@ -34,9 +34,12 @@ if output=$(DOTNET_CLI_UI_LANGUAGE=en dotnet build --nologo --verbosity quiet 2>
   exit 0
 fi
 
-# A block this turn already made Claude attempt a fix; don't loop and hand off to the user.
+# A block this turn already made Claude attempt a fix; don't loop and hand off to the user,
+# naming the current top error (it may differ from the first block's reason precisely because a fix was attempted).
 if printf '%s' "$input" | jq -e '.stop_hook_active == true' >/dev/null 2>&1; then
-  printf '{"systemMessage":"Build gate: dotnet build is STILL failing after a fix attempt."}'
+  first_error=$(printf '%s' "$output" | grep -iE ': error' | awk '!seen[$0]++' | head -n 1)
+  [ -z "$first_error" ] && first_error=$(printf '%s' "$output" | tail -n 1)
+  printf '%s' "$first_error" | jq -Rs '{systemMessage:("Build gate: dotnet build is STILL failing after a fix attempt: " + .)}'
   exit 0
 fi
 

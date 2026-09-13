@@ -7,7 +7,7 @@ insert_final_newline = false
 [*.{cs,csproj,props,sln}]
 indent_style = tab
 
-[*.zsh]
+[*.{zsh,sh}]
 indent_style = space
 indent_size = 2
 

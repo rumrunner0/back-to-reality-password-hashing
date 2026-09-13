@@ -25,17 +25,19 @@
 		<NeutralLanguage>en-US</NeutralLanguage>
 	</PropertyGroup>
 
-	<!-- Debug configuration -->
-	<PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+	<!-- Symbols -->
+	<PropertyGroup>
 		<DebugType>portable</DebugType>
 		<DebugSymbols>true</DebugSymbols>
+	</PropertyGroup>
+
+	<!-- Debug configuration -->
+	<PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
 		<Optimize>false</Optimize>
 	</PropertyGroup>
 
 	<!-- Release configuration -->
 	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-		<DebugType>portable</DebugType>
-		<DebugSymbols>true</DebugSymbols>
 		<Optimize>true</Optimize>
 	</PropertyGroup>
 

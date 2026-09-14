@@ -59,9 +59,9 @@ public sealed record class Argon2IdConfiguration(int Memory, int Iterations, int
 
 	/// <summary>Flag that indicates whether this configuration is within the supported bounds.</summary>
 	internal bool IsValid =>
-		Lanes is >= MIN_LANES and <= MAX_LANES &&
-		Iterations is >= MIN_ITERATIONS and <= MAX_ITERATIONS &&
-		Memory >= Lanes * MIN_MEMORY_PER_LANE && Memory <= MAX_MEMORY;
+		this.Lanes is >= MIN_LANES and <= MAX_LANES &&
+		this.Iterations is >= MIN_ITERATIONS and <= MAX_ITERATIONS &&
+		this.Memory >= this.Lanes * MIN_MEMORY_PER_LANE && this.Memory <= MAX_MEMORY;
 
 	/// <summary>Configuration defined in RFC 9106 as FIRST RECOMMENDED.</summary>
 	/// <remarks>Safe and high-strength default using 1 iteration, 4 lanes, and 2 GiB of RAM.</remarks>

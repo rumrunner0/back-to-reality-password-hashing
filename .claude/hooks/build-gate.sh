@@ -1,9 +1,13 @@
 #!/bin/sh
 
 # Claude Code Stop hook: blocks Claude from finishing a turn while `dotnet build` fails.
-# - Incremental: skips the build when no watched file changed since the last SUCCESSFUL build.
+# - Always builds, non-incrementally: timestamp-skip heuristics false-green deletions and
+#   renames (mtime survives both), and an up-to-date compile skip would hide warnings that
+#   an earlier plain build already tolerated — --no-incremental forces the compiler to run
+#   (measured ~0.8s on this solution).
+# - Warnings block too (-warnaserror): the repo's contract is a 0-warnings build.
 # - Loop guard: if a block already triggered a fix attempt this turn (stop_hook_active), notifies the user via systemMessage (naming the current top error) instead of blocking again.
-# - Fail-open: environment problems (bad cwd, missing jq) disable the gate instead of trapping Claude.
+# - Fail-open: environment problems (bad cwd, missing jq, missing dotnet, missing strong-name key) disable the gate instead of trapping Claude.
 
 input=$(cat)
 cd "${CLAUDE_PROJECT_DIR:-$(dirname "$0")/../..}" || exit 0
@@ -15,22 +19,21 @@ if ! command -v jq >/dev/null 2>&1; then
   exit 0
 fi
 
-stamp=".claude/.build-stamp"
+# A machine without the SDK cannot build at all; blocking would trap Claude with an unfixable reason.
+if ! command -v dotnet >/dev/null 2>&1; then
+  printf '{"systemMessage":"Build gate disabled: dotnet not found on PATH."}'
+  exit 0
+fi
 
-# Skips the build if nothing relevant changed since the last successful build.
-# Not `find -quit`: non-portable, and its failure mode here is a silent permanent skip.
-if [ -f "$stamp" ]; then
-  changed=$(find . \( -name bin -o -name obj -o -name .git \) -prune -o \
-    \( -name '*.cs' -o -name '*.csproj' -o -name '*.props' \
-       -o -name '*.targets' -o -name '*.sln' \) \
-    -newer "$stamp" -print 2>/dev/null | head -n 1)
-  [ -z "$changed" ] && exit 0
+# The strong-name key lives outside the repo; without it the library cannot build on this machine.
+if [ ! -f ../documents/rumrunner0_backtoreality_passwordhashing.snk ]; then
+  printf '{"systemMessage":"Build gate disabled: strong-name key not found at ../documents."}'
+  exit 0
 fi
 
 # Forces English so the ': error' filter below matches regardless of SDK locale.
-if output=$(DOTNET_CLI_UI_LANGUAGE=en dotnet build --nologo --verbosity quiet 2>&1); then
-  mkdir -p .claude 2>/dev/null
-  touch "$stamp" 2>/dev/null
+# -warnaserror enforces the 0-warnings contract, not just compilability.
+if output=$(DOTNET_CLI_UI_LANGUAGE=en dotnet build --nologo --verbosity quiet --no-incremental -warnaserror 2>&1); then
   exit 0
 fi
 

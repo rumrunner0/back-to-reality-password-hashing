@@ -26,7 +26,7 @@ Style is codified in `.editorconfig`. Check with `dotnet format style --verify-n
 
 - Tabs for indentation; Allman braces. Single-line guard clauses stay unbraced on one line.
 - File-scoped namespaces mirroring the feature folder (e.g. `Rumrunner0.BackToReality.PasswordHashing.Argon2`).
-- Private constants in SCREAMING_SNAKE_CASE (e.g. `SALT_LENGTH`); private static fields prefixed `_`.
+- Constants in SCREAMING_SNAKE_CASE (e.g. the internal `SALT_LENGTH`), with the `_` prefix when private (`_SCREAMING_SNAKE_CASE`); private non-const fields are `_camelCase`.
 - XML doc comments (`///`) on every member, including private ones.
 - Classes are `sealed` unless designed for inheritance.
 - Multi-line call argument lists put the opening `(` on its own line.

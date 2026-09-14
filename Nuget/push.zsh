@@ -26,6 +26,10 @@ for package in "${packages[@]}"; do
     echo "Package not found: $nupkg" >&2
     exit 1
   fi
+done
+
+for package in "${packages[@]}"; do
+  nupkg="$package/bin/${CONFIGURATION}/$package.${VERSION}.nupkg"
 
   echo "Pushing $nupkg..."
   dotnet nuget push "$nupkg" \

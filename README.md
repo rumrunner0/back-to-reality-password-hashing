@@ -72,7 +72,7 @@ var parsed = Argon2IdConfiguration.TryParse("m=65536,t=3,p=4", out var configura
 ```
 
 ### Hostile and malformed hashes
-`Verify` never throws because of the content of the hash string: a value that is not a PHC string, names another algorithm or version, is structurally damaged, or carries non-strict Base64 or a wrong salt or tag length returns `false`. The cost parameters are bounded during parsing too, so a crafted hash demanding terabytes of memory or billions of iterations is rejected before any work is done and can't turn verification into a denial of service. Exceptions are reserved for caller mistakes, such as a `null` or empty password or hash.
+`Verify` never throws because of the content of the hash string: a value that is not a PHC string, names another algorithm or version, is structurally damaged, or carries non-strict Base64, a salt shorter than the 8-byte Argon2 minimum, or a tag that is not 32 bytes returns `false`. The cost parameters are bounded during parsing too, so a crafted hash demanding terabytes of memory or billions of iterations is rejected before any work is done and can't turn verification into a denial of service. Exceptions are reserved for caller mistakes, such as a `null` or empty password or hash.
 
 ```csharp
 using Rumrunner0.BackToReality.PasswordHashing.Argon2;

@@ -8,9 +8,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Gotchas
 
-- The release version lives in TWO places that must stay in sync: `<VersionPrefix>` in `Rumrunner0.BackToReality.PasswordHashing/Rumrunner0.BackToReality.PasswordHashing.csproj` and `VERSION=` in `Nuget/push.zsh`. Do not add `<AssemblyVersion>`/`<FileVersion>` back — they derive from the version prefix.
+- The release version lives in TWO places that must stay in sync: `<VersionPrefix>`/`<VersionSuffix>` in `Rumrunner0.BackToReality.PasswordHashing/Rumrunner0.BackToReality.PasswordHashing.csproj` and `VERSION=` in `Nuget/push.zsh`. Do not add `<AssemblyVersion>`/`<FileVersion>` back — they derive from the version prefix.
 - Assemblies are strong-named with a key outside the repo (`../documents/rumrunner0_backtoreality_passwordhashing.snk` relative to the repo root, gitignored) — a fresh clone won't build without it.
-- Cross-project MSBuild config (target framework `net9.0`, language settings, build matrix, assembly metadata) lives in `Directory.Build.props`; packaging, versioning, strong naming, and doc generation live in the library csproj.
+- Cross-project MSBuild config (target framework, language settings, build matrix, assembly metadata) lives in `Directory.Build.props`; packaging, versioning, strong naming, and doc generation live in the library csproj.
 - Package versions are centralized (`Directory.Packages.props`, CPM): a `PackageReference` must not carry `Version`; add a `PackageVersion` entry there instead.
 - `ImplicitUsings` is disabled — every file lists explicit `using` directives.
 - The Demo project explicitly opts out of packing, signing, and doc generation (`IsPackable`/`SignAssembly`/`GenerateDocumentationFile` all `false`) — keep it that way.
@@ -18,19 +18,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Releases
 
-Use `/release <version>`. Manual flow: bump the version in both places above → `dotnet clean --configuration Release` → verify a clean `dotnet build --configuration Release` with 0 warnings → commit `Release X.Y.Z` → `zsh Nuget/pack.zsh` → `zsh Nuget/push.zsh` (needs `NUGET_ORG_API_KEY`, exported in the shell profile). The scripts intentionally lack the executable bit — always invoke them via `zsh`, never `chmod +x`. A pushed version can never be overwritten on nuget.org.
+Use `/release <version>`. Manual flow: bump the version in both places above → `dotnet clean --configuration Release` → verify a clean `dotnet build --configuration Release` with 0 warnings and a green `dotnet test --configuration Release --no-build` → commit `Release <full version>` → `zsh Nuget/pack.zsh` → `zsh Nuget/push.zsh` (needs `NUGET_ORG_API_KEY`, exported in the shell profile). The scripts intentionally lack the executable bit — always invoke them via `zsh`, never `chmod +x`. A pushed version can never be overwritten on nuget.org.
 
 ## Code style
 
 Style is codified in `.editorconfig`. Check with `dotnet format style --verify-no-changes`; NEVER run plain `dotnet format` or `dotnet format whitespace` — Roslyn has no option for the `new (` spacing rule and strips the space before target-typed `new` parentheses (`return new (args);`). Key points:
 
-- Tabs for indentation; Allman braces. Single-line guard clauses stay unbraced on one line.
+- Tabs for indentation in C# and csproj/props XML (shell scripts use two spaces, per `.editorconfig`); Allman braces. Single-line guard clauses stay unbraced on one line.
 - File-scoped namespaces mirroring the feature folder (e.g. `Rumrunner0.BackToReality.PasswordHashing.Argon2`).
 - Constants in SCREAMING_SNAKE_CASE (e.g. the internal `SALT_LENGTH`), with the `_` prefix when private (`_SCREAMING_SNAKE_CASE`); private non-const fields are `_camelCase`.
 - XML doc comments (`///`) on every member, including private ones.
 - Classes are `sealed` unless designed for inheritance.
 - Multi-line call argument lists put the opening `(` on its own line.
 
+## Documentation upkeep
+
+A change lands together with the documents it affects, in the same commit: this file (project description, commands, gotchas, conventions) and `README.md` (the description and usage that ship in the package). These documents state no line numbers and no current version numbers (the csproj and `Directory.Packages.props` hold those); a documented fact that stops being true is fixed in the same change, never later.
+
 ## Git
 
-Commit directly to `main` — no feature branches, PRs, or tags. Messages are short and sentence-case (`Added X`, `Fixed Y`, `Improved Z`); releases are `Release X.Y.Z`; unstable APIs are flagged `(EXPERIMENTAL)` in the commit message.
+Commit directly to `main` — no feature branches, PRs, or tags. Messages are short and sentence-case (`Added X`, `Fixed Y`, `Improved Z`); releases are exactly `Release <full version>` (stable `X.Y.Z` or dev `X.Y.Z-dev.YYYYMMDD.N`); unstable APIs are flagged `(EXPERIMENTAL)` in the commit message.
